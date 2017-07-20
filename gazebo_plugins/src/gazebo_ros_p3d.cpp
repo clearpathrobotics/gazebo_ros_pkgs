@@ -250,6 +250,12 @@ void GazeboRosP3D::UpdateChild()
           vpos = frame_pose.rot.RotateVector(vpos - frame_vpos);
           veul = frame_pose.rot.RotateVector(veul - frame_veul);
         }
+        else
+        {
+          const math::Quaternion rot_inv = pose.rot.GetInverse();
+          vpos = rot_inv.RotateVector(vpos);
+          veul = rot_inv.RotateVector(veul);
+        }
 
         // Apply Constant Offsets
         // apply xyz offsets and get position and rotation components
