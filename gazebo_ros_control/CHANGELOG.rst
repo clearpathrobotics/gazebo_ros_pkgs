@@ -29,6 +29,57 @@ Changelog for package gazebo_ros_control
 * Replace Events::Disconnect* with pointer reset (`#623 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/623>`_)
 * Contributors: Steven Peters
 
+Forthcoming
+-----------
+* add velocity interface support for bullet and dart physics engines
+* Don't ignore robotNamespace (`#637 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/637>`_)
+  * Don't ignore robotNamespace
+  When creating the NodeHandle for reading the PID parameters, the model_nh was always ignored. Instead, all parameters were read from /gazebo_ros_control/pid_gains/<joint_name>/* instead of /<robot_name>/gazebo_ros_control/pid_gains/<joint_name>/*.
+  This commit restores the intended behavior, i.e., the parameters will now read from <robot_name>/..., where <robot_name> is specified via the robotNamespace plugin parameter or the parent name.
+  * Add legacyModeNS parameter
+  The legacyModeNS is only used when the DefaultRobotHWSim is used and does not affect the other RobotHWSims.
+  * Enable warning when PID parameters were not found
+* 2.5.17
+* Prepare changelogs
+* 2.5.16
+* Update changelogs
+* add physics type for dart with joint velocity interface (`#693 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/693>`_)
+* Add warnings when the user is affected by gazebo not preserving world velocity when set positions (`#691 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/691>`_)
+  Issue `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_. Workaround at https://github.com/mintar/mimic_joint_gazebo_tutorial
+* add physics type for dart with joint velocity interface
+* Fix `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_ for Gazebo9 (`#688 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/688>`_)
+  * Fix `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_ for Gazebo9
+  This commit fixes `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_, but only for Gazebo9. Fixing it for Gazebo7
+  (the version used in ROS Kinetic) requires the following PR to be
+  backported to Gazebo 7 and 8:
+  https://bitbucket.org/osrf/gazebo/pull-requests/2814/fix-issue-2111-by-providing-options-to/diff
+  Once that PR has been backported, we can remove the GAZEBO_MAJOR_VERSION
+  guards from this PR so that the fix is active for the older Gazebo
+  versions as well.
+  Tested on Gazebo7 (where it compiles, but doesn't change anything) and
+  Gazebo9 (where it compiles and fixes the bug). I've tested it using the
+  instructions I've put into this repo:
+  https://github.com/mintar/mimic_joint_gazebo_tutorial
+  * remove old ifdef
+* 2.5.15
+* Update changelogs for new release
+* Fix last gazebo8 warnings! (`#658 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/658>`_)
+  * GetPhysicsEngine: use pointer to reduce API calls
+  * add ifdefs for GetPhysicsEngine
+  * ifdefs for World::GetSimTime assignments
+  * merge some ifdefs
+  * set ros::Time variable in ifdefs
+* Fix gazebo8 warnings part 7: ifdef's for Joint::GetAngle and some cleanup (`#642 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/642>`_)
+  * fix major version check >= 8, instead of > 8
+  * gazebo_ros_bumper: use new API in commented code
+  * gazebo_ros_api_plugin: world pose in local vars
+  * worldLinearVel as local var in hand of god plugin
+  * gazebo8+: Joint::GetAngle -> Joint::Position
+* 2.5.14
+* Generate changelogs
+* Replace Events::Disconnect* with pointer reset (`#623 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/623>`_)
+* Contributors: Jack Liu, Jose Luis Rivero, Martin Günther, Santiago Focke, Steven Peters
+
 2.5.13 (2017-06-24)
 -------------------
 * Less exciting console output (`#561 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/561>`_)

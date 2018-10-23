@@ -43,6 +43,143 @@ Changelog for package gazebo_ros
   * Parameter /use_sim_time is only set if not present on Parameter Server
 * Contributors: Jose Luis Rivero, Manuel Ilg, Mike Purvis, Nils Rokita, Steven Peters
 
+Forthcoming
+-----------
+* fix issue `#198 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/198>`_ (`#823 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/823>`_)
+* Added subscriber/callback to gz topic and ROS topic publisher to republish the current real-time factor
+  Conflicts:
+  gazebo_ros/include/gazebo_ros/gazebo_ros_api_plugin.h
+  gazebo_ros/src/gazebo_ros_api_plugin.cpp
+* 2.5.17
+* Prepare changelogs
+* 2.5.16
+* Update changelogs
+* Use generic SIGINT parameter in kill command for gazebo script (kinetic-devel) (`#723 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/723>`_)
+  * Use generic SIGINT parameter in kill command for gazebo script
+  * redirect to kill command to std_err
+* strip comments from parsed urdf (`#695 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/695>`_)
+  Remove comments from urdf before trying to find packages. Otherwise non-existant packages will produce a fatal error, even though they are not used.
+* 2.5.15
+* Update changelogs for new release
+* Pass verbose argument to gzclient
+* Load the libgazebo_ros_api_plugin when starting gzclient so that the ROS event loop will turn over, which is required when you have a client-side Gazebo plugin that uses ROS.
+* Fix last gazebo8 warnings! (`#658 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/658>`_)
+  * GetPhysicsEngine: use pointer to reduce API calls
+  * add ifdefs for GetPhysicsEngine
+  * ifdefs for World::GetSimTime assignments
+  * merge some ifdefs
+  * set ros::Time variable in ifdefs
+* Fix for relative frame errors (`#605 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/605>`_)
+  * Fix relative entity specification.
+  * Fix relative frame transformations.
+  * Clean leftovers from merge resolution.
+* Fix gazebo8 warnings part 10: ifdefs for GetModel, GetEntity, Light (`#656 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/656>`_)
+  * gazebo8 warnings: ifdef World::Light(string) calls
+  ~~~
+  sed -i -e 's@.*->Light(.*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif@' gazebo_ros/src/gazebo_ros_api_plugin.cpp
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->Light(\(.*\)@\1->LightByName(\2@' \
+  gazebo_ros/src/gazebo_ros_api_plugin.cpp
+  ~~~
+  * ifdef World::GetModel(int), World::GetModelCount()
+  First ifdef the GetModel(int) calls with the following:
+  ~~~
+  sed -i -e 's@.*GetModel(i).*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->ModelByIndex(i)\(.*\)@\1->GetModel(i)\2@' \
+  gazebo_ros/src/gazebo_ros_api_plugin.cpp
+  ~~~
+  Then manually move the ifdefs to include for loops.
+  * ifdef World::GetModel(string)
+  ~~~
+  sed -i -e 's@.*->GetModel([^i].*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif@' `grep -rlI 'GetModel(' gazebo\_*`
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->GetModel(\(.*\)@\1->ModelByName(\2@'
+  `grep -rlI 'GetModel(' gazebo\_*`
+  ~~~
+  Then manually merge with some ifdefs from LightByName
+  * ifdef World::GetEntity(string)
+  ~~~
+  sed -i -e 's@.*->GetEntity.*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif@' `grep -rlI 'GetEntity' gazebo\_*`
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->GetEntity(\(.*\)@\1->EntityByName(\2@'
+  `grep -rlI 'GetEntity(' gazebo\_*`
+  ~~~
+  * merge some ifdefs
+* gazebo8 warnings: ifdefs for Get.*Vel() (`#653 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/653>`_)
+* Fix gazebo8 warnings part 8: ifdef's for GetWorldPose (`#650 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/650>`_)
+  * gazebo_ros_vacuum_gripper: ifdef one GetWorldPose
+  * ifdef all remaining GetWorldPose calls
+  ~~~
+  sed -i -e 's@.*GetWorldPose.*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif
+  ~~~
+  ~~~
+  sed -i -e \
+  's@^__REPLACE_\_\(.*\)GetWorldPose()\.Ign\(.*\)@\1WorldPose\2@' \
+  $(grep -rlI GetWorldPose gazebo\_* | grep -v vacuum)
+  ~~~
+  * remove ifdefs for commented GetWorldPose
+* Prevents GAZEBO_MODEL_DATABASE_URI from being overwritten (`#644 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/644>`_)
+* Fix gazebo8 warnings part 7: ifdef's for Joint::GetAngle and some cleanup (`#642 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/642>`_)
+  * fix major version check >= 8, instead of > 8
+  * gazebo_ros_bumper: use new API in commented code
+  * gazebo_ros_api_plugin: world pose in local vars
+  * worldLinearVel as local var in hand of god plugin
+  * gazebo8+: Joint::GetAngle -> Joint::Position
+* 2.5.14
+* Fix latin character not allowed failing by prepare_release script
+* Generate changelogs
+* for gazebo8+, call functions without Get (`#639 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/639>`_)
+* Fix gazebo8 warnings part 5: ignition math in gazebo_ros (`#635 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/635>`_)
+  * gazebo_ros: ign-math in private API, local vars
+  * gazebo_ros: pass const reference instead of copy
+* Fix gazebo8 warnings part 4: convert remaining local variables in plugins to ign-math (`#633 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/633>`_)
+  * plugins: convert all local vars to ign-math
+  * ft_sensor: fix gazebo7 build
+  * Use World::[GS]etGravity
+  * fix gravity syntax
+* gazebo_ros: fix support for python3 (`#622 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/622>`_)
+* gazebo_ros_api_plugin: improve plugin xml parsing (`#625 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/625>`_)
+  An xml comment that start with plugin causes a seg-fault:
+  <!--plugin-->
+  or
+  <!--plugin filename="lib.so"/-->
+  This fixes the xml parsing to not try to add child elements
+  to xml comments.
+* Replace Events::Disconnect* with pointer reset (`#623 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/623>`_)
+* Install spawn_model using catkin_install_python (`#621 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/621>`_)
+* [gazebo_ros] don't overwrite parameter "use_sim_time" (`#606 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/606>`_)
+  * Parameter /use_sim_time is only set if not present on Parameter Server
+* Contributors: Brian Gerkey, Hamza Merzić, Jordan Liviero, Jose Luis Rivero, Manuel Ilg, Mike Purvis, Nils Rokita, R, Steven Peters, azhural, chapulina
+
 2.5.13 (2017-06-24)
 -------------------
 * Quote arguments to echo in libcommon.sh (`#590 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/590>`_)

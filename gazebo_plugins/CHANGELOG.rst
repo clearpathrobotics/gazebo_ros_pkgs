@@ -57,6 +57,180 @@ Changelog for package gazebo_plugins
   Remove compiler directive flags for < GAZEBO 7
 * Contributors: Dave Coleman, Steven Peters
 
+Forthcoming
+-----------
+* corrected the typo 'ture' to 'true' (`#828 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/828>`_)
+* Add horizontal movement option (`#814 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/814>`_)
+  * add horizontal movement option
+  * address pr comments
+* Compute twist in BODY frame for p3d plugin
+* Initialize depth_image_connect_count\_ to 0
+* Removed duplicate line
+* 2.5.17
+* Prepare changelogs
+* gazebo_plugins: install triggered camera plugins (`#740 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/740>`_)
+  Fixes `#739 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/739>`_.
+* 2.5.16
+* Update changelogs
+* Add publishOdomTF flag (`#692 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/692>`_) (`#716 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/716>`_)
+* ROS UTILS: prevent segfault when using alternative GazeboRos constructor (kinetic-devel) (`#721 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/721>`_)
+* Triggered camera / multicamera plugins (`#687 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/687>`_)
+  * adds triggered cameras and multicameras
+  * fix threaded event connection
+  * use correct timestamp for images
+  * remove compiler directives for old gazebo versions
+  * update copyright dates and remove copied comments
+  * test for triggered_camera
+  * expect cameras don't subscribe to trigger topic
+  * subscribe to trigger if CanTrigger is true
+  * fix untriggered first image
+  * fix race condition
+  * change triggered camera test name
+  * fix test
+  * fix 16bit test name
+* Fix sensors after time reset (`#683 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/683>`_)
+  * camera plugin keeps publishing after negative sensor update interval
+  World resets result in a negative time differences between current world
+  time and the last recorded sensor update time, preventing the plugin
+  from publishing new frames. This commit detects such events and resets
+  the internal sensor update timestamp.
+  * block_laser, range, and joint_state_publisher keep publishing after clock reset
+  * p3d keeps publishing after clock reset
+* update test worlds in gazebo_plugins/test for debugging. (`#703 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/703>`_)
+* Support 16-bit cameras (`#675 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/675>`_)
+  * extend camera util to support 16 bit rgb image encoding:  support 16 bit mono
+* Add warnings when the user is affected by gazebo not preserving world velocity when set positions (`#691 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/691>`_)
+  Issue `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_. Workaround at https://github.com/mintar/mimic_joint_gazebo_tutorial
+* Fix `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_ for Gazebo9 (`#688 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/688>`_)
+  * Fix `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_ for Gazebo9
+  This commit fixes `#612 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/612>`_, but only for Gazebo9. Fixing it for Gazebo7
+  (the version used in ROS Kinetic) requires the following PR to be
+  backported to Gazebo 7 and 8:
+  https://bitbucket.org/osrf/gazebo/pull-requests/2814/fix-issue-2111-by-providing-options-to/diff
+  Once that PR has been backported, we can remove the GAZEBO_MAJOR_VERSION
+  guards from this PR so that the fix is active for the older Gazebo
+  versions as well.
+  Tested on Gazebo7 (where it compiles, but doesn't change anything) and
+  Gazebo9 (where it compiles and fixes the bug). I've tested it using the
+  instructions I've put into this repo:
+  https://github.com/mintar/mimic_joint_gazebo_tutorial
+  * remove old ifdef
+* gazebo_plugins: unique names for distortion tests (`#685 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/685>`_)
+* fix gazebo9 warnings by removing Set.*Accel calls
+* gazebo_plugins: don't use -r in tests
+* 2.5.15
+* Update changelogs for new release
+* Adding velocity to joint state publisher gazebo plugin
+* Fix last gazebo8 warnings! (`#658 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/658>`_)
+  * GetPhysicsEngine: use pointer to reduce API calls
+  * add ifdefs for GetPhysicsEngine
+  * ifdefs for World::GetSimTime assignments
+  * merge some ifdefs
+  * set ros::Time variable in ifdefs
+* Fix gazebo8 warnings part 10: ifdefs for GetModel, GetEntity, Light (`#656 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/656>`_)
+  * gazebo8 warnings: ifdef World::Light(string) calls
+  ~~~
+  sed -i -e 's@.*->Light(.*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif@' gazebo_ros/src/gazebo_ros_api_plugin.cpp
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->Light(\(.*\)@\1->LightByName(\2@' \
+  gazebo_ros/src/gazebo_ros_api_plugin.cpp
+  ~~~
+  * ifdef World::GetModel(int), World::GetModelCount()
+  First ifdef the GetModel(int) calls with the following:
+  ~~~
+  sed -i -e 's@.*GetModel(i).*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->ModelByIndex(i)\(.*\)@\1->GetModel(i)\2@' \
+  gazebo_ros/src/gazebo_ros_api_plugin.cpp
+  ~~~
+  Then manually move the ifdefs to include for loops.
+  * ifdef World::GetModel(string)
+  ~~~
+  sed -i -e 's@.*->GetModel([^i].*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif@' `grep -rlI 'GetModel(' gazebo\_*`
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->GetModel(\(.*\)@\1->ModelByName(\2@'
+  `grep -rlI 'GetModel(' gazebo\_*`
+  ~~~
+  Then manually merge with some ifdefs from LightByName
+  * ifdef World::GetEntity(string)
+  ~~~
+  sed -i -e 's@.*->GetEntity.*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif@' `grep -rlI 'GetEntity' gazebo\_*`
+  ~~~
+  ~~~
+  sed -i -e
+  's@^__REPLACE_\_\(.*\)->GetEntity(\(.*\)@\1->EntityByName(\2@'
+  `grep -rlI 'GetEntity(' gazebo\_*`
+  ~~~
+  * merge some ifdefs
+* gazebo8 warnings: ifdefs for Get.*Vel() (`#653 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/653>`_)
+* Fix gazebo8 warnings part 8: ifdef's for GetWorldPose (`#650 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/650>`_)
+  * gazebo_ros_vacuum_gripper: ifdef one GetWorldPose
+  * ifdef all remaining GetWorldPose calls
+  ~~~
+  sed -i -e 's@.*GetWorldPose.*@#if GAZEBO_MAJOR_VERSION >= 8\
+  __REPLACE_\_&\
+  \#else\
+  &\
+  \#endif
+  ~~~
+  ~~~
+  sed -i -e \
+  's@^__REPLACE_\_\(.*\)GetWorldPose()\.Ign\(.*\)@\1WorldPose\2@' \
+  $(grep -rlI GetWorldPose gazebo\_* | grep -v vacuum)
+  ~~~
+  * remove ifdefs for commented GetWorldPose
+* Fix gazebo8 warnings part 7: ifdef's for Joint::GetAngle and some cleanup (`#642 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/642>`_)
+  * fix major version check >= 8, instead of > 8
+  * gazebo_ros_bumper: use new API in commented code
+  * gazebo_ros_api_plugin: world pose in local vars
+  * worldLinearVel as local var in hand of god plugin
+  * gazebo8+: Joint::GetAngle -> Joint::Position
+* 2.5.14
+* Generate changelogs
+* for gazebo8+, call functions without Get (`#639 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/639>`_)
+* Fix gazebo8 warnings part 4: convert remaining local variables in plugins to ign-math (`#633 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/633>`_)
+  * plugins: convert all local vars to ign-math
+  * ft_sensor: fix gazebo7 build
+  * Use World::[GS]etGravity
+  * fix gravity syntax
+* Fix gazebo8 warnings part 3: more ign-math in plugins (`#631 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/631>`_)
+  * gazebo_plugins: more conversion to ign-math
+  * gazebo_plugins replace gazebo/math headers
+  * diff_drive plugin: convert types to ignition math
+  * skid_steer plugin: convert types to ignition math
+  * tricycle plugin: convert types to ignition math
+* Fix gazebo8 warnings part 2: replace private member gazebo::math types with ignition (`#628 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/628>`_)
+  * Remove old compiler directive blocks
+  * gazebo_ros_imu_sensor: convert to ignition math
+  * gazebo_ros_planar_move: ign private/local vars
+  * gazebo_ros_imu: ign private/local vars
+  * gazebo_ros_p3d: ign private/local vars
+* Replace Events::Disconnect* with pointer reset (`#623 <https://github.com/clearpathrobotics/gazebo_ros_pkgs/issues/623>`_)
+* Remove compiler directive flags for < GAZEBO 7
+* Contributors: Alejandro Hernández Cordero, Daiki Maekawa, Dave Coleman, Jordan Liviero, Jose Luis Rivero, Julian Kooij, Kevin Allen, Martin Ganeff, Martin Günther, Steven Peters, Veera Ragav, krzysztof-zurad
+
 2.5.13 (2017-06-24)
 -------------------
 * Fix inverted height in block laser plugin (`#582 <https://github.com/ros-simulation/gazebo_ros_pkgs/issues/582>`_)
